@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Best Friend 💖</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary: #ff4d6d;
+            --glass-bg: rgba(255, 255, 255, 0.2);
+            --border: rgba(255, 255, 255, 0.4);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+            color: #333;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Main Slider Container */
+        .slider-container {
+            position: relative;
+            width: 90%;
+            max-width: 650px;
+            height: 85vh;
+            max-height: 750px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 30px;
+            border: 2px solid var(--border);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), inset 0 0 20px rgba(255,255,255,0.5);
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Falling Hearts & Flowers Animation Inside Border */
+        .falling-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            top: -10%;
+            animation: fall linear infinite;
+            opacity: 0.7;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(800px) rotate(360deg); opacity: 0; }
+        }
+
+        /* Slides Wrapper */
+        .slides {
+            position: relative;
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Individual Slide */
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px) scale(0.95);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        /* Typography */
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.2rem;
+            color: #d81b60;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 3px rgba(255,255,255,0.8);
+        }
+        h2 { font-size: 1.5rem; color: #4a4a4a; margin-bottom: 15px; }
+        p { font-size: 1.05rem; line-height: 1.7; color: #444; max-width: 500px; }
+
+        /* Polaroid Photo Frame */
+        .polaroid {
+            background: white;
+            padding: 12px 12px 20px 12px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            max-width: 300px;
+            width: 100%;
+            transform: rotate(-2deg);
+            transition: transform 0.3s;
+        }
+        .polaroid:hover { transform: rotate(0deg) scale(1.02); }
+        .polaroid img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        .polaroid p {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.6rem;
+            color: #333;
+            margin: 0;
+        }
+
+        /* 16:9 Video Container */
+        .video-container {
+            width: 100%;
+            max-width: 500px;
+            aspect-ratio: 16 / 9;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border: 3px solid white;
+        }
+        .video-container video, .video-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        /* Controls */
+        .controls {
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-top: 1px solid var(--border);
+            z-index: 2;
+        }
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(255, 77, 109, 0.3);
+        }
+        .btn:hover { background: #e03155; transform: translateY(-2px); }
+        .btn:disabled { background: #d0d0d0; box-shadow: none; cursor: not-allowed; }
+
+        /* Navigation Dots */
+        .dots { display: flex; gap: 5px; flex-wrap: wrap; justify-content: center; max-width: 150px; }
+        .dot {
+            width: 8px; height: 8px; border-radius: 50%;
+            background: rgba(0, 0, 0, 0.2); transition: 0.3s;
+        }
+        .dot.active { background: var(--primary); width: 18px; border-radius: 10px; }
+
+        /* Letter Box */
+        .letter-box {
+            background: rgba(255, 255, 255, 0.6);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        @media (max-width: 600px) {
+            .polaroid img { height: 200px; }
+            h1 { font-size: 2.5rem; }
+            p { font-size: 0.95rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="slider-container">
+    
+    <div class="falling-elements" id="fallingElements"></div>
+
+    <div class="slides">
+        
+        <div class="slide active">
+            <h1>To Gauwa! ✨</h1>
+            <h2>පොඩි gift එකක්...</h2>
+            <p>ඔයාව මට හම්බෙන්නේ නැති නිසා මේක හැදුවේ. මං උපරිම උත්සාහ කරා මේක ලස්සන කරන්න.</p>
+            <button class="btn" style="margin-top: 20px;" onclick="nextSlide()">Start</button>
+        </div>
+
+        <div class="slide">
+            <h1>My Best Friend 💌</h1>
+            <div class="letter-box">
+                <p style="text-align: justify; font-style: italic;">
+                    "මට හිතාගන්න බෑ ඔයාව මට කොහොම මුන ගැහුණද කියලා. එක සැරේ මේ හිටියා මේ මතු උනා. ඔයා මගේ ජීවිතයට කොයි විදිහට ආවත් මන් විශ්වාස කරන්නේ ඒ මගේ වාසනාවක් නිසා උනා කියලා. මොකද ඔයා මාත් එක්ක නොහිටියා නම් අද මං නැති වෙන්න තිබුණා."
+                </p>
+                <p style="text-align: right; font-weight: 600; color: var(--primary); margin-top: 10px;">- Brother from another mother</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h1>Memories 📸</h1>
+            <div class="polaroid" style="transform: rotate(-3deg);">
+                <img src="https://drive.google.com/thumbnail?sz=w1000&id=1uJ4wkVBfpU3SQx5hlEdudE67CqGz8Lkl" alt="Photo 1">
+                <p>The first photo we took. ❤️</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h1>Memories 📸</h1>
+            <div class="polaroid" style="transform: rotate(2deg);">
+                <img src="https://drive.google.com/thumbnail?sz=w1000&id=1tih2-qtyulJBdBXEXP_wI0juxLFtS0NP" alt="Photo 2">
+                <p>The first science day we went to. ✨</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h1>Memories 📸</h1>
+            <div class="polaroid" style="transform: rotate(-1deg);">
+                <img src="https://drive.google.com/thumbnail?sz=w1000&id=1J-WZBsnyf7Iba5F2VNnsUUA5ofrnN82E" alt="Photo 3">
+                <p>The photo from your previous birthday. 🥳</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h1>Memories 📸</h1>
+            <div class="polaroid" style="transform: rotate(3deg);">
+                <img src="https://drive.google.com/thumbnail?sz=w1000&id=1wXNwc9MBlhsqDYFMzQK8XpND-Bqw6m3h" alt="Photo 4">
+                <p>The cutest picture of you I have. 🥹</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h1>Memories 📸</h1>
+            <div class="polaroid" style="transform: rotate(-2deg);">
+                <img src="https://drive.google.com/thumbnail?sz=w1000&id=1jtWlmjA74JEOXOJAaCU7V-QKjjqYPoEr" alt="Photo 5">
+                <p>An old memory 💫</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h1>Memories 📸</h1>
+            <div class="polaroid" style="transform: rotate(1deg);">
+                <img src="https://drive.google.com/thumbnail?sz=w1000&id=1THLbTreyrsuibv2PGeWyGlboaILcdb_Q" alt="Photo 6">
+                <p>Unforgettable days. ✨</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h1>Memories 📸</h1>
+            <div class="polaroid" style="transform: rotate(-3deg);">
+                <img src="https://drive.google.com/thumbnail?sz=w1000&id=1tlh8ZQ1GgDehAps4QKOyykICOWDt8tQH" alt="Photo 7">
+                <p>The last photo of us. 🤗</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h1>Just a little note... 📝</h1>
+            <div class="letter-box">
+                <p>
+                    "ජීවිතේ මොන දේ වුණත් මාව තේරුම් අරන් හැමදාම මගේ ළඟින්ම හිටපු එකම කෙනා ඔයා. ඔයා මගේ ජීවිතේට ආපු එක මම ලබපු ලොකුම වාසනාවක්. මං බලාපොරොත්තු නොවුණු විදිහට ඔයා මගේ life එකට ඇවිත් මාව සම්පූර්ණ වෙනස් කරා. මටත් පුදුමයි ඒ ගැන. මං ඔයාගෙ හැම සතුටකදීම හැම දුකක්දීම ඔයා එක්ක එකටම ඉන්නවා. ඕනම ප්‍රශ්නයකදී මට පුළුවන් විදිහට හැමදාමත් වගේ ඔයාගේ ළඟින්ම ඉන්නවා. කිසිම වෙලාවක තනි වෙන්නේ නෑ ඔයා. හැම හීනයක්ම සැබෑ කරගෙන හැමදාම සතුටින් ඉන්න මගේ සුදු නෝනා. Happy Birthday Buddy! 🎂✨💖"
+                </p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h1 style="font-size: 3rem; margin-bottom: 20px;">Best Friends Forever ❤️</h1>
+            
+            <div class="video-container">
+                <iframe src="https://drive.google.com/file/d/1oEOC-kHIlDi3V9hCq4Z4lnPcXtcNGFXF/preview" allow="autoplay"></iframe>
+            </div>
+            
+            <button class="btn" style="margin-top: 25px;" onclick="celebrate()">Celebrate! 🎉</button>
+        </div>
+
+    </div>
+
+    <div class="controls">
+        <button class="btn" id="prevBtn" onclick="prevSlide()" disabled>Back</button>
+        <div class="dots" id="dotsContainer"></div>
+        <button class="btn" id="nextBtn" onclick="nextSlide()">Next</button>
+    </div>
+</div>
+
+<script>
+    // Slider Logic
+    const slides = document.querySelectorAll('.slide');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const dotsContainer = document.getElementById('dotsContainer');
+    let currentSlide = 0;
+
+    // Create Dots based on number of slides
+    slides.forEach((_, idx) => {
+        const dot = document.createElement('div');
+        dot.classList.add('dot');
+        if(idx === 0) dot.classList.add('active');
+        dotsContainer.appendChild(dot);
+    });
+    const dots = document.querySelectorAll('.dot');
+
+    function updateSlides() {
+        slides.forEach((slide, idx) => {
+            slide.classList.remove('active');
+            dots[idx].classList.remove('active');
+        });
+        
+        slides[currentSlide].classList.add('active');
+        dots[currentSlide].classList.add('active');
+
+        prevBtn.disabled = currentSlide === 0;
+        nextBtn.style.display = currentSlide === slides.length - 1 ? 'none' : 'block';
+
+        if(currentSlide === slides.length - 1) {
+            setTimeout(celebrate, 500); // Auto confetti on last slide
+        }
+    }
+
+    function nextSlide() {
+        if(currentSlide < slides.length - 1) { currentSlide++; updateSlides(); }
+    }
+
+    function prevSlide() {
+        if(currentSlide > 0) { currentSlide--; updateSlides(); }
+    }
+
+    // Confetti Logic
+    function celebrate() {
+        confetti({ particleCount: 200, spread: 100, origin: { y: 0.5 } });
+    }
+
+    // Falling Hearts & Flowers Animation Logic
+    const emojis = ['🌸', '💖', '✨', '🌸', '💕'];
+    const container = document.getElementById('fallingElements');
+
+    function createParticle() {
+        const particle = document.createElement('div');
+        particle.classList.add('particle');
+        
+        // Random Emoji
+        particle.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+        
+        // Random Horizontal Position (0% to 100%)
+        particle.style.left = Math.random() * 100 + '%';
+        
+        // Random Size
+        particle.style.fontSize = (Math.random() * 15 + 10) + 'px';
+        
+        // Random Fall Speed (duration)
+        const duration = Math.random() * 4 + 4; // Between 4s and 8s
+        particle.style.animationDuration = duration + 's';
+        
+        container.appendChild(particle);
+        
+        // Remove element after it finishes falling to save memory
+        setTimeout(() => {
+            particle.remove();
+        }, duration * 1000);
+    }
+
+    // Generate a new particle every 400 milliseconds
+    setInterval(createParticle, 400);
+
+</script>
+
+</body>
+</html>
